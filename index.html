@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App Clone</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+    <div class="navbar">
+        <div id="search-container">
+            <input type="text" id="search" placeholder="Search city..." autocomplete="off">
+            <i class="search-icon" id="search-icon"><i class="fas fa-search"></i></i>
+        </div>
+
+
+        <button id="left-arrow" class="arrow"> <img src="icon/left.svg" alt=""></button>
+        <div class="locations-container">
+            <div id="locations"></div>
+        </div>
+        <button id="right-arrow" class="arrow"><img src="icon/right.svg" alt=""></button>
+
+        <div class="controls">
+            <button id="mode" onclick="toggleMode()">Theme</button>
+            <button id="toggle-temp">°C</button>
+
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div id="weather-container"></div>
+        <div id="map"></div>
+    </div>
+
+    <div class="forecast-toggle">
+        <button id="btn-5day" class="active">Weekly</button>
+        <button id="btn-hourly">Hourly</button>
+    </div>
+    <div id="forecast" class="forecast-container"></div>
+    <div class="weather-details-header text-white text-lg font-semibold px-6 py-2">
+        <span>Detailed Weather :</span>
+        <span id="weather-time" class="text-sm font-normal text-gray-300 ml-2"></span>
+    </div>
+
+
+    <div id="detailed-weather" class="weather-grid"></div>
+
+
+    <section id="weather-news" class="news-section">
+        <h1>Weather News</h1>
+    </section>
+    <section id="trending-news" class="news-section">
+        <h3>more for you</h3>
+    </section>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+   <script src="script.js"></script>
+</body>
+
+</html>
