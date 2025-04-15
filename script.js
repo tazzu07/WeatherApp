@@ -624,8 +624,8 @@ let currentIndex = 0;
 let newsArticles = [];
 
 async function fetchNews() {
-    const apiKey = "2b20174406a14f1b9bfee2f16d8f5175";
-    const url = `https://newsapi.org/v2/everything?q=weather&apiKey=${apiKey}`;
+    const apiKey = "a2a9a0551c04105f61c02bbfacdfab26";
+    const url = `https://gnews.io/api/v4/search?q=weather&lang=en&country=us&max=30&apikey=${apiKey}`;
     const res = await fetch(url);
     const data = await res.json();
     newsArticles = data.articles;
@@ -636,17 +636,20 @@ async function fetchNews() {
 function createCard(article, size) {
     const div = document.createElement("div");
     div.className = `news-card ${size}`;
+  
+    // Use fallback image if article.image is null/undefined
+    const imageUrl = article.image || 'fallback.jpg';
+  
     div.innerHTML = `
-<a href="${article.url}" target="_blank" class="card-link">
-    <div class="image-container">
-        <img src="${article.urlToImage || 'fallback.jpg'}" alt="News Image" />
-        <div class="title-inside">${article.title}</div>
-    </div>
-</a>
-`;
+      <a href="${article.url}" target="_blank" class="card-link">
+        <div class="image-container">
+          <img src="${imageUrl}" alt="News Image" onerror="this.onerror=null;this.src='fallback.jpg';" />
+          <div class="title-inside">${article.title}</div>
+        </div>
+      </a>`;
     return div;
-}
-
+  }
+  
 
 function renderWeatherNews() {
     const container = document.getElementById("weather-news");
@@ -671,29 +674,39 @@ function renderWeatherNews() {
 function renderTrendingNews() {
     const container = document.getElementById("trending-news");
     const layout = [
-        ['large', 'small', 'small'],    // Row 1
-        ['small', 'small', 'small', 'small'], // Row 2
-        ['small', 'small', 'small', 'small']  // Row 3
+        ['large', 'small', 'small'],    
+        ['small', 'small', 'small', 'small'],
+        ['small', 'small', 'small', 'small']
     ];
 
     layout.forEach(row => {
         const rowDiv = document.createElement("div");
         rowDiv.className = "news-row";
+        let cardsAdded = 0;
+
         row.forEach(size => {
             if (currentIndex >= newsArticles.length) return;
             const article = newsArticles[currentIndex++];
             rowDiv.appendChild(createCard(article, size));
+            cardsAdded++;
         });
-        container.appendChild(rowDiv);
+
+        if (cardsAdded > 0) {
+            container.appendChild(rowDiv);
+        }
     });
 }
+
 
 // Infinite Scroll Pattern
 window.addEventListener("scroll", () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-        renderTrendingNews(); 
+        if (currentIndex < newsArticles.length) {
+            renderTrendingNews(); 
+        }
     }
 });
+
 
 window.onload = function () {
     getUserLocation();

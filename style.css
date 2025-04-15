@@ -669,6 +669,17 @@ width: 80px;
         z-index: 2;
     }
 
+    .title-inside {
+        color: white;
+        font-weight: bold;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+      }
+      
+
     .news-card:hover img {
         transform: scale(1.05);
     }
@@ -680,3 +691,27 @@ width: 80px;
     .news-row:empty {
         display: none;
     }
+    
+      
+      .image-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+        border-radius: inherit;
+      }
+      .image-container img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+        border-radius: 12px;
+      }
+      
+      .image-container:hover img {
+        transform: scale(1.05);
+      }
+      
+      
