@@ -619,19 +619,45 @@ function getUserLocation() {
     }
 }
 
-
 let currentIndex = 0;
-let newsArticles = [];
 
-async function fetchNews() {
+let newsArticles = [];
+let currentPage = 1;         // 🔄 Start from page 1
+let isFetching = false;      // ⏳ Prevent duplicate fetches
+let isAllNewsRendered = false;
+
+async function fetchNews(page = 1) {
     const apiKey = "a2a9a0551c04105f61c02bbfacdfab26";
-    const url = `https://gnews.io/api/v4/search?q=weather&lang=en&country=us&max=30&apikey=${apiKey}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    newsArticles = data.articles;
-    renderWeatherNews();
-    renderTrendingNews();
+    const url = `https://gnews.io/api/v4/search?q=weather&lang=en&country=us&max=30&page=${page}&apikey=${apiKey}`;
+    
+    try {
+        isFetching = true;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.articles || data.articles.length === 0) {
+            isAllNewsRendered = true;
+            return;
+        }
+
+        newsArticles = newsArticles.concat(data.articles);
+
+        // 🔥 Important order: Weather first, sets currentIndex = 10
+        if (page === 1) {
+            renderWeatherNews();      // 👈 Uses index 0–9
+        }
+
+        renderTrendingNews();         // 👈 Uses index 10+, avoids repeat
+        currentPage++;
+    } catch (error) {
+        console.error("Failed to fetch news:", error);
+    } finally {
+        isFetching = false;
+    }
 }
+
+
+
 
 function createCard(article, size) {
     const div = document.createElement("div");
@@ -651,25 +677,43 @@ function createCard(article, size) {
   }
   
 
-function renderWeatherNews() {
+  function renderWeatherNews() {
     const container = document.getElementById("weather-news");
     const layout = [
-        ['large', 'small', 'small'],     
-        ['small', 'small', 'large'],    
-        ['small', 'small', 'small', 'small']  
+        ['large', 'small', 'small'],
+        ['small', 'small', 'large'],
+        ['small', 'small', 'small', 'small']
     ];
+
+    const weatherArticles = newsArticles.slice(0, 10); // 👈 Reserve first 10 for weather
+    let index = 0;
 
     layout.forEach(row => {
         const rowDiv = document.createElement("div");
         rowDiv.className = "news-row";
         row.forEach(size => {
-            if (currentIndex >= newsArticles.length) return;
-            const article = newsArticles[currentIndex++];
+            if (index >= weatherArticles.length) return;
+            const article = weatherArticles[index++];
             rowDiv.appendChild(createCard(article, size));
         });
         container.appendChild(rowDiv);
     });
+
+    currentIndex = 10; // 👈 So trending picks up from here
 }
+
+
+
+window.addEventListener("scroll", () => {
+    if (isAllNewsRendered || isFetching) return;
+
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+        console.log("📡 Reached bottom — fetching more news");
+        fetchNews(currentPage);
+    }
+});
+
+
 
 function renderTrendingNews() {
     const container = document.getElementById("trending-news");
@@ -687,6 +731,7 @@ function renderTrendingNews() {
         row.forEach(size => {
             if (currentIndex >= newsArticles.length) return;
             const article = newsArticles[currentIndex++];
+            console.log("📰 Appending article:", article.title);
             rowDiv.appendChild(createCard(article, size));
             cardsAdded++;
         });
@@ -697,15 +742,6 @@ function renderTrendingNews() {
     });
 }
 
-
-// Infinite Scroll Pattern
-window.addEventListener("scroll", () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-        if (currentIndex < newsArticles.length) {
-            renderTrendingNews(); 
-        }
-    }
-});
 
 
 window.onload = function () {

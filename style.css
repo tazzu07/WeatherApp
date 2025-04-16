@@ -713,5 +713,14 @@ width: 80px;
       .image-container:hover img {
         transform: scale(1.05);
       }
+      #trending-news {
+        padding: 1rem;
+      }
+      
+      .news-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
       
       
