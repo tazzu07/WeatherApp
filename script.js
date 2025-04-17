@@ -642,12 +642,12 @@ async function fetchNews(page = 1) {
 
         newsArticles = newsArticles.concat(data.articles);
 
-        // 🔥 Important order: Weather first, sets currentIndex = 10
+       
         if (page === 1) {
-            renderWeatherNews();      // 👈 Uses index 0–9
+            renderWeatherNews();      
         }
 
-        renderTrendingNews();         // 👈 Uses index 10+, avoids repeat
+        renderTrendingNews();         
         currentPage++;
     } catch (error) {
         console.error("Failed to fetch news:", error);
@@ -699,7 +699,7 @@ function createCard(article, size) {
         container.appendChild(rowDiv);
     });
 
-    currentIndex = 10; // 👈 So trending picks up from here
+    currentIndex = 10; 
 }
 
 
